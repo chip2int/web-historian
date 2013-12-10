@@ -45,7 +45,7 @@ describe("Node Server Request Listener Function", function() {
     var req = new stubs.Request("/", "POST", {url: url});
 
     handler.handleRequest(req, res);
-
+    
     var fileContents = fs.readFileSync(handler.datadir, 'utf8');
     expect(res._responseCode).toEqual(302);
     expect(fileContents).toEqual(url + "\n");
