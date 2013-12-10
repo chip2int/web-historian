@@ -24,7 +24,6 @@ var actionListener = {
     });
 
     req.addListener('end', function() {
-      console.log("On end:", module.exports.datadir, result);
       fs.writeFileSync(module.exports.datadir, result+"\n");
       res.end(null);
     });
@@ -36,7 +35,7 @@ var actionListener = {
 
     var fileContents = fs.readFileSync(module.exports.datadir, 'utf8');
     var newUrl = req.url.slice(1);
-    
+
     if (newUrl.length > 0 && fileContents.search(RegExp(newUrl, 'gi')) === -1) {
       var statusCode = 404;
       res.writeHead(statusCode, headers);
@@ -57,9 +56,7 @@ var actionListener = {
 };
 
 module.exports.handleRequest = function (req, res) {
-  console.log(exports.datadir);
   
-
   actionListener[req.method](req, res);
 
 };
