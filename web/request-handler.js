@@ -1,6 +1,6 @@
 var path = require('path');
 var fs = require('fs');
-
+var url = require('url');
 
 
 module.exports.datadir = path.join(__dirname, "../data/sites.txt"); // tests will need to override this.
@@ -16,9 +16,13 @@ var headers = {
 var actionListener = {
   'POST': function (req, res) {
     var statusCode = 302;
-
     var result = "";
     req.addListener('data', function(data) {
+    
+      startInd = data.indexOf("=");
+      endInd   = data.indexOf("&");
+      data = data.substring(startInd+1, endInd); 
+      data = url.parse(data).pathname;
       res.writeHead(statusCode, headers);
       result +=data;
     });
@@ -28,14 +32,16 @@ var actionListener = {
       res.end(null);
     });
 
-
   },
 
   'GET': function(req, res){
 
     var fileContents = fs.readFileSync(module.exports.datadir, 'utf8');
-    var newUrl = req.url.slice(1);
-
+    var newUrl = req.url.slice(2);
+    var startInd = newUrl.indexOf("=");
+    var endInd   = newUrl.indexOf("&");
+    newUrl = newUrl.substring(startInd+1, endInd);
+    console.log("Parse: ", url.parse(newUrl));
     if (newUrl.length > 0 && fileContents.search(RegExp(newUrl, 'gi')) === -1) {
       var statusCode = 404;
       res.writeHead(statusCode, headers);
@@ -56,7 +62,7 @@ var actionListener = {
 };
 
 module.exports.handleRequest = function (req, res) {
-  
+  req.setEncoding('utf8');
   actionListener[req.method](req, res);
 
 };

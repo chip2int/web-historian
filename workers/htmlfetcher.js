@@ -17,7 +17,6 @@ var readUrlFile = function () {
 
 
 var downloadUrls = function() {
-  console.log("IN urls");
   urlArray = readUrlFile();
   helpers.downloadUrls(urlArray, sitesDir);  
 

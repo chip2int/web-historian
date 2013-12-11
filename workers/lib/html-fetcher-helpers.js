@@ -1,5 +1,6 @@
 var fs = require("fs");
 var http = require("http");
+var url = require("url")
 
 exports.readUrls = function(filePath, cb){
   var fileContents = fs.readFileSync(filePath, 'utf8');
@@ -28,7 +29,6 @@ exports.downloadUrls = function(urls, location){
     });
 
     res.on('end', function() {
-      console.log('In end');  
       fs.writeFileSync(location+"/"+fileName, data);
       //fs.appendFileSync("./testing.txt", "\n------Next File-----\n");
     });
@@ -42,11 +42,8 @@ exports.downloadUrls = function(urls, location){
   
   for (var i = 0;  i < urls.length; i++) {
     url = urls[i];
-    console.log("URL", url);
-    http.get(url, resCB).on('error', errCB);
-    console.log('before or after "GOT RESPONSE"????')
-    // console.log('returned request', request)
-  };
+    http.get("http://"+url, resCB).on('error', errCB);
+  }
 
   return true;
 };
