@@ -15,7 +15,6 @@ exports.Request = function(url, method, postdata) {
       for (var key in self._postData) {
         //fields.push(key + "=" + self._postData[key].replace(" ", "+"));
         sites = self._postData[key].replace(" ", "+");
-        console.log("In CB", sites )
         fields.push(sites);
       }
       callback(fields.join("&"));

@@ -1,7 +1,9 @@
 var path = require('path');
 var fs = require('fs');
 var url = require('url');
-
+var http = require('http');
+var helper = require('./http-helpers');
+var fetcher = require('../workers/htmlfetcher');
 
 module.exports.datadir = path.join(__dirname, "../data/sites.txt"); // tests will need to override this.
 var headers = {
@@ -18,7 +20,6 @@ var actionListener = {
     var statusCode = 302;
     var result = "";
     req.addListener('data', function(data) {
-    
       startInd = data.indexOf("=");
       endInd   = data.indexOf("&");
       data = data.substring(startInd+1, endInd); 
@@ -28,10 +29,23 @@ var actionListener = {
     });
 
     req.addListener('end', function() {
-      fs.writeFileSync(module.exports.datadir, result+"\n");
-      res.end(null);
+      var found = false;
+      var rArray = fetcher.readUrlFile();
+      for (var i = 0; i < rArray.length; i++) {
+        if (rArray[i] === result) {
+           found = true;
+           break;
+        }
+      }
+      if (found) {
+        helper.serveStaticAssets(res, found, result);
+      }
+      else {
+        helper.serveStaticAssets(res, found, result);
+        fs.appendFileSync(module.exports.datadir, result+"\n");
+      }
+      res.end('');
     });
-
   },
 
   'GET': function(req, res){
@@ -41,7 +55,6 @@ var actionListener = {
     var startInd = newUrl.indexOf("=");
     var endInd   = newUrl.indexOf("&");
     newUrl = newUrl.substring(startInd+1, endInd);
-    console.log("Parse: ", url.parse(newUrl));
     if (newUrl.length > 0 && fileContents.search(RegExp(newUrl, 'gi')) === -1) {
       var statusCode = 404;
       res.writeHead(statusCode, headers);

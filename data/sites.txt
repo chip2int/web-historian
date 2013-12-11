@@ -1,1 +1,4 @@
-www.apple.com
+www.bbc.co.uk
+www.cnn.com
+www.ibm.com
+www.perl.org

@@ -6,7 +6,7 @@ var sitesFile = path.join(__dirname, "../data/sites.txt");
 var sitesDir = path.join(__dirname, "../data/sites");
 
 
-var readUrlFile = function () {
+module.exports.readUrlFile = function () {
   urlArray = [];
   helpers.readUrls(sitesFile, function(result) {
     urlArray = result.slice();
@@ -16,10 +16,11 @@ var readUrlFile = function () {
 
 
 
-var downloadUrls = function() {
-  urlArray = readUrlFile();
+module.exports.downloadUrls = function() {
+  urlArray = module.exports.readUrlFile();
   helpers.downloadUrls(urlArray, sitesDir);  
 
 };
 
-downloadUrls(); 
+module.exports.downloadUrls();
+
